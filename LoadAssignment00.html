@@ -1,0 +1,278 @@
+<!doctype html>
+<!-- Modified on Jun 06, 2014 12:34:00 PM  -->
+<!-- Modified on Jun 05, 2014 17:20:00 PM  -->
+<!-- Modified on Apr 26, 2014 08:10:00 PM  -->
+<!-- Modified on Mar 16, 2014 11:38:14 PM  -->
+<!-- Modified on Jan 29, 2014 11:38:14 AM  -->
+<!-- Created on Apr 26, 2011 2:48:54 PM    -->
+<html lang="en-US">
+  <head>
+    <title>Load Assignment</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="css/loadassignmentstyle.css" />
+    <script type="text/javascript" src="javascript/jquery-2.1.1.js"></script>
+    <script type="text/javascript" src="javascript/LoadAssignment00.js"></script>
+    <script type="text/javascript">
+      
+    </script>
+  </head>
+  <body>
+<!--    <form id="loadForm" action="LoadAction00.php" method="post">    -->
+<!--    <form id="loadForm" action="#" method="post">    -->
+      <table id="mainTable" border="0" align="center">
+        <tr><td colspan="6" id="pageTitle">Load Assignment Home</td></tr>
+        <tr>
+          <td colspan="1">&nbsp;</td>
+          <td align="center" colspan="4">
+            <div class="menubar">
+              <ul>
+                <li><a id="shipperPage" href="pagedloadassignment01.html" tabindex="17">Shipper</a></li>
+                <li><a id="consigneePage" href="pagedloadassignment02.html" tabindex="18">Consignee</a></li>
+                <li><a id="pickPage" href="pagedloadassignment03.html" tabindex="19">Pick(s)</a></li>
+                <li><a id="dropPage" href="pagedloadassignment04.html" tabindex="20">Drop(s)</a></li>
+                <li><a id="fuelPage" href="pagedloadassignment05.html" tabindex="21">Fuel</a></li>
+              </ul>
+            </div>
+          </td>
+          <td colspan="1">&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="left" colspan="3">
+            <table border="0" align="center" cellpadding="1" cellspacing="0">
+              <tr>
+                <td align="left">Load &#35;:&nbsp;<font color="red" font-size="3em">*</font></td>
+                <td align="left">
+                  <input id="ldNumber" type="text" size="15" name="loadNumber" tabindex="1" autofocus >
+            <!--             onblur="localDataStore.init(validateLoadNumber(this))" -->
+                </td>
+                <td align="center">
+                  <input id="loadAction" type="hidden" name="loadActionFlag" value="new" />
+                  <input id="loadStartDate" type="hidden" name="loadStartDate" />
+                  <input id="submitButton1" type="button" name="actionButton1" value="New/Find" tabindex="2" />
+                </td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <td colspan="3" align="center">
+            <table border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="left" valign="top">Delivery:</td>
+                <td align="left">
+                  <select id="selectDayOpts" name="loadDeliveryDate" tabindex="3" >
+                    <option value="01/01/2011">01/01/2011</option>
+                    <option value="01/02/2011">01/02/2011</option>
+                    <option value="01/03/2011">01/03/2011</option>
+                    <option value="01/04/2011">01/04/2011</option>
+                    <option value="01/05/2011">01/05/2011</option>
+                    <option value="01/06/2011">01/06/2011</option>
+                    <option value="01/07/2011">01/07/2011</option>
+                  </select>
+                </td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td align="left">mm/dd/yyyy</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <tr>
+            <td align="center" colspan="6">&nbsp;</td>
+          </tr>
+        </tr>
+        <tr>
+          <td align="left" colspan="3">
+            <table border="0" align="center" cellpadding="5">
+              <tr>
+                <td>Broker Name:</td>
+                <td>
+                  <input id="brokerName" type="text" size="15" name="brokerName" tabindex="4" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>Broker #:</td>
+                <td>
+                  <input id="brokerLoadID" type="text" size="15" name="brokerLoadID" tabindex="5" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>Broker Phone:</td>
+                <td>
+                  <input id="brokerPhone" type="text" size="15" name="brokerPhone" tabindex="6" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <td colspan="3" align="center">
+            <table border="0" cellpadding="5">
+              <tr>
+                <td>
+                  <input id="LoadTemp" type="text" size="5" name="loadTemp" tabindex="7" />
+                </td>
+                <td align="left">BOL Temp:</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center">
+                  <input id="preTripped" type="checkbox" name="reeferPretripped" value="preTripped" tabindex="8" /></td>
+                <td align="left">Reefer Pretrip</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center">
+                  <input id="tempMatches" type="checkbox" name="tempMatches" value="tempChecked" tabindex="9" /></td>
+                <td align="left">Set Temp Matches BOL</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center">
+                  <input id="sealMatches" type="checkbox" name="sealMatches" value="sealChecked" tabindex="10" /></td>
+                <td align="left">Seal Matches BOL</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="6">&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="center" colspan="3">
+            <table border="1" cellspacing="1" cellpadding"3" width="95%">
+              <tr>
+                <td class="emptyCell">&nbsp;</td>
+                <td class="titleCell">Paid</td>
+                <td class="titleCell">Actual</td>
+                <td class="titleCell">Variance (%)</td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">Empty</td>
+                <td align="center">
+                  <input id="eP" type="number" name="emptyPaid" class="dataCell" tabindex="11" 
+                        onblur="if( parseInt(eP.value) && parseInt(lP.value) ) {
+                                  totalPaid.value=(parseInt(eP.value)+parseInt(lP.value)).toString();}">
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="emptyActual" for="bOdoE eOdoE" type="number" class="dataCell" name="emptyActual"></output>
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="emptyVariance" for="" type="number" class="dataCell" name="emptyVariance"></output>
+                </td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">Loaded</td>
+                <td align="center">
+                  <input id="lP" type="number" class="dataCell"  name="loadedPaid" tabindex="12" 
+                         onblur="if(parseInt(eP.value) && parseInt(lP.value)) {
+                                   totalPaid.value=(parseInt(eP.value)+parseInt(lP.value)).toString();}" >
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="loadedActual" for="eOdoE eOdoL" type="number" class="dataCell" name="loadedActual" ></output>
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="loadedVariance" type="number" class="dataCell" name="loadedVariance" ></output>
+                </td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">Total</td>
+                <td class="computedCell" align="center">
+                  <output id="totalPaid" for="eP lP" type="number" class="dataCell"  name="totalPaid"></output>
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="totalActual" for="bOdoE eOdoE eOdoL" type="number" class="dataCell"  name="totalActual" ></output>
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="totalVariance" for="bOdoE eOdoL" type="number" class="dataCell" name="totalVariance" ></output>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td align="center" colspan="3">
+            <table border="1" cellspacing="1" cellpadding"3" width="95%">
+              <tr>
+                <td class="emptyCell">&nbsp;</td>
+                <td class="titleCell">Empty</td>
+                <td class="titleCell">Loaded</td>
+                <td class="titleCell">Total</td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">End Odo</td>
+                <td align="center">
+                  <input id="eOdoE" type="number" class="dataCell" name="endingEmpty" tabindex="14" 
+                         onblur="if(parseInt(eOdoE.value) && parseInt(bOdoE.value)) {
+                                    totalEmptyMiles.value=(parseInt(eOdoE.value)-parseInt(bOdoE.value)).toString(); 
+                                    beginingLoaded.value=eOdoE.value.toString();
+                                    emptyActual.value=(parseInt(eOdoE.value)-parseInt(bOdoE.value)).toString();
+                                    var perCentage=((parseInt(emptyActual.value)-
+                                                     parseInt(emptyPaid.value))/parseInt(emptyPaid.value))*100.0;
+                                    emptyVariance.value=perCentage.toFixed(2); }">
+                </td>
+                <td align="center">
+                  <input id="eOdoL" type="number" class="dataCell" name="endingLoaded" tabindex="15" 
+                         onblur="if(parseInt(eOdoE.value) && parseInt(eOdoL.value)) {
+                                    totalLoadedMiles.value=(parseInt(eOdoL.value)-parseInt(eOdoE.value)).toString();
+                                    loadedActual.value=totalLoadedMiles.value.toString();
+                                    totalActual.value=(parseInt(eOdoL.value)-parseInt(bOdoE.value)).toString();
+                                    totalMiles.value=totalActual.value;
+                                    var perCentage=((parseInt(loadedActual.value)-
+                                                     parseInt(loadedPaid.value))/parseInt(loadedPaid.value))*100.0;
+                                    loadedVariance.value=perCentage.toFixed(2);
+                                    perCentage=((parseInt(totalActual.value)-
+                                                 parseInt(totalPaid.value))/parseInt(totalPaid.value))*100.0;
+                                    totalVariance.value=perCentage.toFixed(2); }" >
+                </td>
+                <td class="emptyCell">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">Start Odo</td>
+                <td align="center">
+                  <input id="bOdoE" type="number" class="dataCell" name="beginingEmpty" tabindex="13">
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="beginingLoaded" for"eE" type="number" class="dataCell" name="beginningLoaded"></output>
+                </td>
+                <td class="emptyCell">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="titleCell" align="center">Total Miles</td>
+                <td class="computedCell" align="center">
+                  <output id="totalEmptyMiles" for="bOdoE eOdoE" type="text" class="dataCell" name="totalEmptyMiles" ></output>
+                </td>
+                <td class="computedCell" align="center">
+                  <output id="totalLoadedMiles" for="eOdoE eOdoL" type="text" class="dataCell" name="totalLoadedMiles" ></output>
+                </td>
+                <td class="computedCell" align="center"l>
+                  <output id="totalMiles" for="bOdoE eOdoL" type="text" class="dataCell" name="totalMiles" ></output>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" align="center">
+             <input id="submitButton2" type="button" name="actionButton2" value="Add Load Assignment" tabindex="16" />
+          </td>
+        </tr>
+      </table>
+<!--    </form>    -->
+    <p><font color="red" font-size="1em">*&nbsp;Required field</font></p>
+    <p id="cright">&nbsp;&copy;&nbsp;2011&nbsp;Vallecito Software</p>
+<!--    <script type="text/javascript">
+      localDataStore.init(); 
+    </script>    -->
+  </body>
+</html>

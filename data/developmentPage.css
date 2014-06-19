@@ -1,0 +1,175 @@
+/* Created on Apr 6, 2014 2:02:49 PM */
+
+body {
+   width:100%;
+   height:100%;
+   background-color:#EBEBEB;
+   
+   }
+a:link {color:#CC0000;}       /* unvisited link  */
+a:visited {color:#008F8F;}    /* visited link    */
+a:hover {color:#4E5A65;}      /* mouse over link */
+a:active {color:#CC00CC;}     /* selected link   */  
+  
+#header {
+   width:95%;
+   height:250px;
+   margin-left: auto;
+   margin-right: auto;
+/*   border-style:solid;
+   border-width:2px;
+   border-color:#98bf21;
+*/   
+   }
+#headerTitle {
+   
+   }
+#headerTitle  h1{
+   font-family:Georgia,"Times New Roman",Serif;
+   font-size: 3em;
+   height:30%;
+   text-align:center;
+   } 
+#headerNavPanel {
+   
+   }
+#headerNavBar {
+   font-family:"Times New Roman",Georgia,Serif;
+   margin-left:12%;
+   margin-right:auto;
+   width: 75%;
+   height: 70%;
+/*   border-style:solid;
+   border-width:2px;
+   border-color:#98bf21;
+*/
+/*   overflow: hidden;  */
+   }
+   
+.headerNavBar ul {
+   margin-top: -5px;
+   margin-left:auto;
+   margin-right:auto;
+   width: 95%;
+   height:100%;
+   text-align:center;
+   list-style-type: none;
+   }
+.headerNavBar li {
+   width:22%;
+   height: 25%;
+   margin-top;0px;
+   margin:2px;
+   padding: 2px;
+/*   display:inline;  */
+   text-align: center;
+   font-size:1em;
+   float:left;
+   text-decoration:none;
+   list-style-type: none;
+/*   border-style: solid;
+   border-width: 1px;
+   border-color: green;
+*/
+   }
+.headerNavBar a {
+   display: block;
+   font-size: 1em;
+   width: 125px;
+   margin-left: auto;
+   margin-right: auto;
+   text-decoration:none;
+   border-radius:5px;
+   border-style: outset;
+   border-width: 3px;
+   border-color: red;
+   }
+.headerNavBar a:hover {
+   background-color: #C8D6E8;
+   }
+.headerNavBar a:onclick {
+   background-color: #C8D6E8;
+   border-style: inset;
+   border-width: 3px;
+   border-color: black;
+   }
+
+#navbarSubmenu {
+    
+   }
+.navbarSubmenu ul {
+   margin-left:auto;
+   margin-right:auto;
+   width: 95%;
+   height:95%;
+   }
+ .navbarSubmenu lil {
+    display: block;
+    text-decoration:none;
+    list-style-type: none;
+   }
+ .navbarSubmenu a {
+    
+   }
+      
+#pageContent {
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+   }
+   
+#footer {
+   margin-left:auto;
+   margin-right:auto;
+   width: 95%;
+   height:100px;
+   }
+.footerForm {
+   margin-left: auto;
+   margin-right: auto;
+   margin-top: 5px;
+   margin-bottom: 5px;
+   padding: 5px;
+   width: 150px;
+   display:inline;
+    }
+#footerLeft {
+    width: 33%;
+    float: left;
+    top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    padding: 3px;
+    display: inline;
+    height: 75px;
+    }
+    
+#footerCenter {
+    top: 0px;
+    float: left;
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3px;
+    display: inline;
+    height: 75px;
+    }
+#centerPayPal{
+    margin-left: 50px;
+    margin-right: 50px;
+    width: 150px;
+    height: 50px;
+    }
+        
+#footerRight {
+    width:33%;
+    float: left;
+    top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align:center;
+    padding: 3px;
+    display: inline;
+    height: 75px;
+    }    

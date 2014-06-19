@@ -1,0 +1,490 @@
+<!doctype html>
+<!-- Modified on Mar 16, 2014 11:38:14 PM  -->
+<!-- Modified on Jan 29, 2014 11:38:14 AM  -->
+<!-- Created on Apr 26, 2011 2:48:54 PM    -->
+<html lang="en-US">
+  <head><title>Load Assignment</title>
+    <meta charset="UTF-8"/>
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"/>  -->
+    <link rel="stylesheet" type="text/css" href="./data/loadassignmentstyle.css" />
+    <script type="text/javascript">
+
+    function catchEvent(eventObj, event, eventHandler) {
+      if (eventObj.addEventListener) {
+        eventObj.addEventListener(event, eventHandler, false);
+      } else if (eventObj.attachEvent) {
+        event = "on" + event;
+        eventObj.attachEvent(event, eventHandler);
+      }
+    }
+
+    function cancelEvent(evnt) {
+      if (evnt.preventDefault) {
+        evnt.preventDefault();
+        evnt.stopPropagation();
+      } else {
+        evnt.returnValue = false;
+        evnt.cancelBubble = true;
+      }
+    }
+
+    function setupEvents(evnt) {
+      var formObj = document.getElementById("loadForm");
+      if (formObj != null) {
+        catchEvent(formObj, "submit", validateForm);
+      }
+    }
+
+    function validateForm (evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var target = theEvent.target ? theEvent.target : theEvent.srcElement;
+      var inputFlds = document.getElementById("loadForm").getElementsByTagName("input");
+      var varNwLd = document.getElementById("varNwLd");
+      var varldStrt = document.getElementById("ldStrtDt");
+// if a new load set the start date to today's date
+      if ( varNwLd.value == "new" ) {
+        varldStrt.value = todaysMonth + "/" + todaysDay + "/" + todaysYear;
+//        alert("New start date id: " + varldStrt.value + ".");
+      }
+      else {
+//        alert("Old start date is: " + varldStrt.value + ".");
+      }
+    }
+
+    // loadNumber must be 7 digits
+    function validateLoadNumber(evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var loadNumberPattern = /^[0-9]*$/g;
+      var OK = false;
+      if (theEvent.name == "loadNumber") {
+        if (loadNumberPattern.test(theEvent.value) && theEvent.value.length == 7) {
+          OK = true;
+        } else {
+          OK = false;
+          alert("The Load Number is required and must be composed of 7 digits only.");
+          theEvent.value = "";
+          cancelEvent(evnt);
+        }    
+      }
+    }
+
+    var days=['01','02','03','04','05','06','07','08','09','10','11','12','13','14',
+              '15','16','17','18','19','20','21','22','23','24','25','26','27','28',
+              '29','30','31'];
+    var daysInMonth=[31,0,31,30,31,30,31,31,30,31,30,31];   
+    var todaysdate = new Date();
+    var todaysYear = todaysdate.getFullYear();
+    var todaysMonth = todaysdate.getMonth()+1;
+    var todaysDay = todaysdate.getDate();
+ 
+    function initVariables(evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var target = theEvent.target ? theEvent.target : theEvent.srcElement;
+//  generate one week of possible delivery dates starting with today's date
+      var selectDayFlds = document.getElementById("selectDayOpts").options;
+      var oD = new Date(todaysYear, todaysMonth-1, 1);
+      oD.od=oD.getDay()+1;
+      daysInMonth[1]=(((oD.getFullYear()%100!=0)&&(oD.getFullYear()%4==0))||(oD.getFullYear()%400==0))?29:28;
+      dayIdx = todaysDay - 1;
+      mnthIdx = todaysMonth - 1;
+      yR = todaysYear;
+      for (var i = 0; i < selectDayFlds.length; i++ ) {
+        selectDayFlds[i].innerHTML = days[mnthIdx] + " / " + days[dayIdx] + " / " + yR;
+        selectDayFlds[i].value = days[mnthIdx] + "/" + days[dayIdx] + "/" + yR;
+        dayIdx++;
+        if ( dayIdx+1 > daysInMonth[mnthIdx] ) {
+          dayIdx = 0;
+          mnthIdx++;
+          if ( mnthIdx+1 > 11 ) {
+            mnthIdx = 0;
+            yR++;
+          }
+        }
+      }
+//    selectDayFlds[0].selected = true;
+    }
+
+    catchEvent(window, "load", setupEvents);
+    catchEvent(window, "load", initVariables);
+    
+    function checkPaidMiles(evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var mileageNumberPattern = /^[0-9]+.?[0-9]*$/g;
+      if ( (theEvent.value.length> 0) && !mileageNumberPattern.test(theEvent.value) ) {
+        alert('Miles are digits with a whole and optional fractional part seperated by a ".".');
+        theEvent.value = "";
+        cancelEvent(evnt);  
+      }
+      else {
+        calculatePaidMiles();
+      }  
+    }
+    
+    function calculatePaidMiles() {
+      var inputFlds = document.getElementById("loadForm").getElementsByTagName("input");
+      var emptyPaidIdx = -1;  
+      var loadedPaidIdx = -1;  
+      var totalPaidIdx = -1;
+      var emptyActualIdx = -1;  
+      var loadedActualIdx = -1;  
+      var totalActualIdx = -1;
+      var emptyVarianceIdx = -1;
+      var loadedVarianceIdx = -1;
+      var totalVarianceIdx = -1;
+      var miles = 0;
+      var variance = 0;
+      for (var i = 0; i < inputFlds.length; i++ ) {
+        if (inputFlds[i].type != "submit") {
+          switch (inputFlds[i].name) {
+          case "emptyPaid":
+            emptyPaidIdx = i;
+            break;
+          case "loadedPaid":
+            loadedPaidIdx = i;
+            break;
+          case "totalPaid":
+            totalPaidIdx = i;
+            break;
+          case "emptyActual":
+            emptyActualIdx = i;
+            break; 
+          case "loadedActual":
+            loadedActualIdx = i;
+            break; 
+          case "totalActual":
+            totalActualIdx = i;
+            break;
+          case "emptyVariance":
+            emptyVarianceIdx = i;
+            break;
+          case "loadedVariance":
+            loadedVarianceIdx = i;
+            break;
+          case "totalVariance":
+            totalVarianceIdx = i;
+          }
+        }
+      }
+      if ( inputFlds[emptyPaidIdx].value>0 && inputFlds[loadedPaidIdx].value>0 ) {
+        miles = new Number(Number(inputFlds[emptyPaidIdx].value) + Number(inputFlds[loadedPaidIdx].value));
+        inputFlds[totalPaidIdx].value = miles.toString();
+      }
+      if ( inputFlds[emptyActualIdx].value>0 && inputFlds[loadedActualIdx].value>0 ) {
+        miles = new Number(Number(inputFlds[emptyActualIdx].value) + Number(inputFlds[loadedActualIdx].value));
+        inputFlds[totalActualIdx].value = miles.toString();
+      }
+      if ( inputFlds[emptyPaidIdx].value>0 && inputFlds[emptyActualIdx].value>0 ) {
+        variance = new Number((Number(inputFlds[emptyActualIdx].value) - Number(inputFlds[emptyPaidIdx].value)) / Number(inputFlds[emptyPaidIdx].value) * 100); 
+        inputFlds[emptyVarianceIdx].value = variance.toFixed(1);
+      }
+      if ( inputFlds[loadedPaidIdx].value>0 && inputFlds[loadedActualIdx].value>0 ) {
+        variance = new Number((Number(inputFlds[loadedActualIdx].value) - Number(inputFlds[loadedPaidIdx].value)) / Number(inputFlds[loadedPaidIdx].value) * 100);
+        inputFlds[loadedVarianceIdx].value = variance.toFixed(1);
+      }
+      if ( inputFlds[totalPaidIdx].value>0 && inputFlds[totalActualIdx].value>0 ) {
+        variance = new Number((Number(inputFlds[totalActualIdx].value) - Number(inputFlds[totalPaidIdx].value)) / Number(inputFlds[totalPaidIdx].value) * 100);
+        inputFlds[totalVarianceIdx].value = variance.toFixed(1);
+      }  
+    }
+    
+    function checkOdoMiles(evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var mileageNumberPattern = /^[0-9]+.?[0-9]*$/g;
+      if ( (theEvent.value.length>0) && !mileageNumberPattern.exec(theEvent.value) ) {
+        alert('Miles are digits with a whole and optional fractional part seperated by a ".".');
+        theEvent.value = "";
+        cancelEvent(evnt);
+      }
+      else {
+        calculateOdoMiles();
+      }
+    }
+    
+    function calculateOdoMiles() {
+      var inputFlds = document.getElementById("loadForm").getElementsByTagName("input");
+      var emptyPaidIdx = -1;  
+      var loadedPaidIdx = -1;  
+      var totalPaidIdx = -1;
+      var emptyActualIdx = -1;  
+      var loadedActualIdx = -1;  
+      var totalActualIdx = -1;
+      var emptyVarianceIdx = -1;
+      var loadedVarianceIdx = -1;
+      var totalVarianceIdx = -1;
+      var beginingEmptyIdx = -1;
+      var endingEmptyIdx = -1;
+      var totalEmptyMilesIdx = -1;
+      var beginingLoadedIdx = -1;
+      var endingLoadedIdx = -1;
+      var totalLoadedMilesIdx = -1;
+      var totalMilesIdx = -1;
+
+      for (var i = 0; i < inputFlds.length; i++ ) {
+        if (inputFlds[i].type != "submit") {
+          switch (inputFlds[i].name) {
+          case "beginingEmpty":
+            beginingEmptyIdx = i;
+            break;
+          case "endingEmpty":
+            endingEmptyIdx = i; 
+            break;
+          case "totalEmptyMiles":
+            totalEmptyMilesIdx = i; 
+            break;
+          case "beginingLoaded":
+            beginingLoadedIdx = i; 
+            break;
+          case "endingLoaded":
+            endingLoadedIdx = i; 
+            break;
+          case "totalLoadedMiles":
+            totalLoadedMilesIdx = i;
+            break;
+          case "totalMiles":
+            totalMilesIdx = i;
+            break;
+          case "emptyPaid":
+            emptyPaidIdx = i;
+            break;
+          case "loadedPaid":
+            loadedPaidIdx = i;
+            break;
+          case "totalPaid":
+            totalPaidIdx = i;
+            break;
+          case "emptyActual":
+            emptyActualIdx = i;
+            break; 
+          case "loadedActual":
+            loadedActualIdx = i;
+            break; 
+          case "totalActual":
+            totalActualIdx = i;
+            break;
+          case "emptyVariance":
+            emptyVarianceIdx = i;
+            break;
+          case "loadedVariance":
+            loadedVarianceIdx = i;
+            break;
+          case "totalVariance":
+            totalVarianceIdx = i;   
+          }
+        }
+      }
+      if ( inputFlds[beginingEmptyIdx].value>0 && inputFlds[endingEmptyIdx].value>0 ) { 
+        inputFlds[totalEmptyMilesIdx].value = new Number(Number(inputFlds[endingEmptyIdx].value) - Number(inputFlds[beginingEmptyIdx].value));
+        inputFlds[beginingLoadedIdx].value = new Number(inputFlds[endingEmptyIdx].value);
+        inputFlds[emptyActualIdx].value = new Number(inputFlds[totalEmptyMilesIdx].value);  
+      }
+      if ( inputFlds[beginingLoadedIdx].value>0 && inputFlds[endingLoadedIdx].value>0 ) { 
+        inputFlds[totalLoadedMilesIdx].value = new Number(Number(inputFlds[endingLoadedIdx].value) - Number(inputFlds[beginingLoadedIdx].value));
+        inputFlds[loadedActualIdx].value = new Number(inputFlds[totalLoadedMilesIdx].value);
+      }
+      if (inputFlds[totalEmptyMilesIdx].value>0 && inputFlds[totalLoadedMilesIdx].value>0 ) { 
+        inputFlds[totalMilesIdx].value = new Number(Number(inputFlds[totalEmptyMilesIdx].value) + Number(inputFlds[totalLoadedMilesIdx].value));
+        inputFlds[totalActualIdx].value = new Number(inputFlds[totalMilesIdx].value);
+      }
+      calculatePaidMiles();
+    }
+    
+    </script>
+  </head>
+  <body>
+    <form id="loadForm" action="PHP_LoadFormCheck.php" method="post">
+      <table border="0" align="center" width="80%">
+        <tr><td colspan="6" id="pageTitle">Load Assignment Home</td></tr>
+        <tr>
+          <td colspan="1">&nbsp;</td>
+          <td align="center" colspan="4">
+            <div class="menubar">
+              <ul>
+                <li><a href="pagedloadassignment01.html" tabindex="17">Shipper</a></li>
+                <li><a href="pagedloadassignment02.html" tabindex="18">Consignee</a></li>
+                <li><a href="pagedloadassignment03.html" tabindex="19">Pick(s)</a></li>
+                <li><a href="pagedloadassignment04.html" tabindex="20">Drop(s)</a></li>
+                <li><a href="pagedloadassignment05.html" tabindex="21">Fuel</a></li>
+              </ul>
+            </div>
+          </td>
+          <td colspan="1">&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="left" colspan="3">
+            <table border="0" align="center" cellpadding="1" cellspacing="0">
+              <tr>
+                <td align="left">Load &#35;:&nbsp;<font color="red" font-size="3em">*</font></td>
+                <td align="left">
+                  <input type="text" size="20" name="loadNumber" tabindex="1" autofocus onblur="validateLoadNumber(this)" />
+                </td>
+                <td align="center">
+                  <input id="varNwLd" type="hidden" name="loadActionFlag" value="new" />
+                  <input id="ldStrtDt" type="hidden" name="loadStartDate" />
+                  <input type="submit" name="actionButton1" value="New/Find" tabindex="2" />
+                </td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <td colspan="3" align="center">
+            <table border="0" cellpadding="0" cellspacing="0">
+              <tr>
+                <td align="left" valign="top">Delivery:</td>
+                <td align="left">
+                  <select id="selectDayOpts" name="loadDeliveryDate" tabindex="3" >
+                    <option value="01/01/2011">01/01/2011</option>
+                    <option value="01/02/2011">01/02/2011</option>
+                    <option value="01/03/2011">01/03/2011</option>
+                    <option value="01/04/2011">01/04/2011</option>
+                    <option value="01/05/2011">01/05/2011</option>
+                    <option value="01/06/2011">01/06/2011</option>
+                    <option value="01/07/2011">01/07/2011</option>
+                  </select>
+                </td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td align="left">mm/dd/yyyy</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <tr>
+            <td align="center" colspan="6">&nbsp;</td>
+          </tr>
+        </tr>
+        <tr>
+          <td align="left" colspan="3">
+            <table border="0" align="center" cellpadding="5">
+              <tr>
+                <td>Broker Name:</td>
+                <td>
+                  <input type="text" size="20" name="brokerName" tabindex="4" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>Broker #:</td>
+                <td>
+                  <input type="text" size="20" name="brokerLoadID" tabindex="5" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>Broker Phone:</td>
+                <td>
+                  <input type="text" size="20" name="brokerPhone" tabindex="6" />
+                </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+          <td colspan="3" align="center">
+            <table border="0" cellpadding="5">
+              <tr>
+                <td>
+                  <input type="text" size="5" name="loadTemp" tabindex="7" />
+                </td>
+                <td align="left">BOL Temp:</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center"><input type="checkbox" name="reeferPretripped" value="preTripped" tabindex="8" /></td>
+                <td align="left">Reefer Pretrip</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center"><input type="checkbox" name="tempMatches" value="tempChecked" tabindex="9" /></td>
+                <td align="left">Set Temp Matches BOL</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td align="center"><input type="checkbox" name="sealMatches" value="sealChecked" tabindex="10" /></td>
+                <td align="left">Seal Matches BOL</td>
+                <td>&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="6">&nbsp;</td>
+        </tr>
+        <tr>
+          <td align="center" colspan="3">
+            <table border="1" cellspacing="1" cellpadding"3" width="90%">
+              <tr>
+                <td id="emptyCell" style="width:25%" align="center">&nbsp;</td>
+                <td id="titleCell" width="25%" align="center">Paid</td>
+                <td id="titleCell" width="25%" align="center">Actual</td>
+                <td id="titleCell" width="25%" align="center">Variance (%)</td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">Empty</td>
+                <td align="center"><input type="text" size="8" name="emptyPaid" tabindex="11" onblur="checkPaidMiles(this)" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="emptyActual" onfocus="calculatePaidMiles()" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="emptyVariance" onfocus="calculatePaidMiles()" /></td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">Loaded</td>
+                <td align="center"><input type="text" size="8" name="loadedPaid" tabindex="12" onblur="calculatePaidMiles(this)" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="loadedActual" onfocus="calculatePaidMiles()" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="loadedVariance" onfocus="calculatePaidMiles()" /></td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">Total</td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="totalPaid" onfocus="calculatePaidMiles()" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="totalActual" onfocus="calculatePaidMiles()" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="totalVariance" onfocus="calculatePaidMiles()" /></td>
+              </tr>
+            </table>
+          </td>
+          <td align="center" colspan="3">
+            <table border="1" cellspacing="1" cellpadding"3" width="90%">
+              <tr>
+                <td id="emptyCell" style="width:25%" align="center">&nbsp;</td>
+                <td id="titleCell" style="width:25%" align="center">Empty</td>
+                <td id="titleCell" style="width:25%" align="center">Loaded</td>
+                <td id="titleCell" style="width:25%" align="center">Total</td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">End Odo</td>
+                <td align="center"><input type="text" size="8" name="endingEmpty" tabindex="14" onblur="checkOdoMiles(this)" /></td>
+                <td align="center"><input type="text" size="8" name="endingLoaded" tabindex="15" onblur="checkOdoMiles(this)" /></td>
+                <td id="emptyCell">&nbsp;</td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">Start Odo</td>
+                <td align="center"><input type="text" size="8" name="beginingEmpty" tabindex="13" onblur="checkOdoMiles(this)" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="beginingLoaded" onfocus="calculateOdoMiles()" /></td>
+                <td id="emptyCell">&nbsp;</td>
+              </tr>
+              <tr>
+                <td id="titleCell" align="center">Total Miles</td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="totalEmptyMiles" onfocus="calculateOdoMiles()" /></td>
+                <td id="computedCell" align="center"><input type="text" size="8" name="totalLoadedMiles" onfocus="calculateOdoMiles()" /></td>
+                <td id="computedCell" align="center"l><input type="text" size="8" name="totalMiles" onfocus="calculateOdoMiles()" /></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" align="center">
+            <input type="submit" name="actionButton2" value="Add/Clear" tabindex="16" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    <p><font color="red" font-size="1em">*&nbsp;Required field</font></p>
+    <p id="cright">&nbsp;&copy;&nbsp;2011&nbsp;Vallecito Software</p>
+  </body>
+</html>
