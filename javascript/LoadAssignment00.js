@@ -36,23 +36,18 @@ $(document).ready(function() {
                         {totalVariance: ""},
                       ];
 
-      this.initStorage();
-      this.save();
-      this.retrieve();
-      this.saveLoadItem("", "");
-      this.getLoadItem("");
-
       console.log("Exit LocalDataStorage.constructor: "+JSON.stringify(this.loadData));
    };
 
    LocalDataStorage.prototype = {
-
+      constructor: LocalDataStorage,
       initStorage: function(ld) {
           console.log("enter LocalDataStorage.initStorage:");
           if( ld ) {
             console.log("   new loadID is: "+ld);
-            if( this.loadID !== ("testLoad_"+ld) ) {
+            if( this.loadID !== ld ) {
               console.log("   old load: "+this.loadID);
+              this.save();
               this.loadID        = ld;               //  save ID
               this.loadNameSpace = "testLoad_"+ld;   //  generate nameSpace for local storage
               console.log("   new loadNameSpace: "+this.loadNameSpace);
@@ -106,16 +101,13 @@ $(document).ready(function() {
 
   function LoadDate(yy, mm, dd) {
     this.year = yy?yy:new Date().getFullYear();
-    this.month = mm?mm:new Date().getMonth();
+    this.month = mm?mm:new Date().getMonth() + 1;
     this.day = dd?dd:new Date().getDate();
-
-    this.toString(this.year, this.month, this.day);
-    this.initDeliveryDates(this.year, this.month, this.day);
-    this.fromString("");
     console.log("LoadDate.constructor: yyyy "+this.year+" mm "+this.month+" dd "+this.day);
   }
 
   LoadDate.prototype = {
+    constructor: LoadDate,
 
     initDeliveryDates: function(yy, mm, dd) {
       console.log("enter LoadDate.initDeliveryDates: yy: "+yy?yy:this.year+" mm: "+mm?mm:this.month+" dd: "+dd?dd:this.day);
@@ -169,7 +161,7 @@ $(document).ready(function() {
       console.log("Exit LoadDate.fromString = "+aDate);
       return aDate;
     },
-  };
+  }; 
 
 /*  localDataStore.init();    */
 /*  initDeliveryDates();      */
@@ -183,22 +175,19 @@ $(document).ready(function() {
   $("#fuelPage").on("", function(){});
 */
   $("#ldNumber").on("blur", function() {
-    var ld=$("#ldNumber");
-    console.log("Enter #ldNumber.blur: ld="+ld.value);
-    if( !localDataStore ) {
-      console.log("   NO localDataStore!");
-    } else {
-      console.log("   localDataStore exists");
-    }
-    localDataStore.initStorage();
-    localDataStore.initStorage($("#ldNumber").value);
-    var aDate = new LoadDate(localDataStore.loadStartDate.year,
-                             localDataStore.loadStartDate.month,
-                             localDataStore.loadStartDate.day);
-    
-    aDate.initDeliveryDates(localDataStore.loadStartDate.year,
-                            localDataStore.loadStartDate.month,
-                            localDataStore.loadStartDate.day);
+       var ld = this.value;
+       console.log("Enter #ldNumber.blur: ld= "+ld);
+       if( !localDataStore ) {
+         console.log("   NO localDataStore!");
+       } else {
+         console.log("   localDataStore exists");
+         if( ld ) {
+           localDataStore.initStorage(ld);
+         } else {
+           console.log("      localDataStore exists but ld does not exist!");
+         }   
+       }
+      
   });
 /*
   $("#loadAction").on("", function(){});
@@ -231,5 +220,6 @@ $(document).ready(function() {
   $("#submitButton2").on("", function(){});
   $("#cright").on("", function(){});
 */
+
 
 });
