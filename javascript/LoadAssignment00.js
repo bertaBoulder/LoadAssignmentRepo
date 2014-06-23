@@ -39,7 +39,7 @@ $(document).ready(function() {
           console.log("enter localDataStore.initStorage:");
           if( ld ) {
               console.log("   storage initialization request for load: "+ld);
-              if( this.loadID !== ld ) {
+              if( this.loadID !== ld ) {    //  current load not same as load specified
                   console.log("   old load: "+this.loadID);
                   if( this.loadID === "" ) {    //  app initialize
                     this.loadNameSpace = "testLoad_"+ld;   //  generate nameSpace for local storage
@@ -49,12 +49,27 @@ $(document).ready(function() {
                       populateDisplay(this.loadData);      // load existing data onto display
                     } else {
                       console.log("   storage NOT read");  // brand new load so save space
-                      this.loadID = ld;                    //  save ID
+                      this.loadID = ld;
+                      this.loadData.loadNumber = ld;                    //  save ID
                       this.save();
                     } 
+                  } else {
+                    this.save();
+                    this.loadID = ld;
+                    this.loadData.loadNumber = ld;
+                    this.loadNameSpace = "testLoad_"+ld;
+                    if( this.retrieve(this.loadNameSpace ) ) {   // get existing load?
+                      console.log("   storage read");      // specified load exists 
+                      populateDisplay(this.loadData);      // load existing data onto display
+                    } else {
+                      console.log("   storage NOT read");  // brand new load so save space
+                      this.loadID = ld;                    //  save ID
+                      this.loadData.loadNumber = ld;
+                      this.save();
+                    }
                   }
                   return true;   
-              }
+              } else {}
               console.log("   storage namespace is: "+this.loadNameSpace);
               if( this.retrieve(this.loadNameSpace) ) {
                   console.log("   storage read");
@@ -85,12 +100,13 @@ $(document).ready(function() {
       },
 
       saveLoadItem: function(item, info) {
+          console.log("Enter localDataStore.saveLoadItem: save- "+info+" in "+item);
           if( item=="loadDeliveryDate" || item=="loadStartDate" ) {
             this.loadData[item] = this.fromString(info);
           } else {
             this.loadData[item] = info;
           }
-          save();
+//          this.save();
       },
 
       getLoadItem: function(item) {
@@ -211,7 +227,7 @@ $(document).ready(function() {
        if( !localDataStore ) {
          console.log("   NO localDataStore!");
        } else {
-         console.log("   localDataStore exists");
+         localDataStore
          if( ld ) {
            localDataStore.initStorage(ld);
          } else {
@@ -224,10 +240,31 @@ $(document).ready(function() {
   $("#loadAction").on("", function(){});
   $("#loadStartDate").on("", function(){});
   $("#submitButton1").on("", function(){});
+*/
+  $("#submitButton2").on("click", function(){
+    console.log("Enter submitButton2" );
+    localDataStore.save();
+    $("#submitButton2").text("Save Load Assignment");
+  });
+/*
   $("#selectDayOpts").on("", function(){});
-  $("#brokerName").on("", function(){});
-  $("#brokerLoadID").on("", function(){});
-  $("#brokerPhone").on("", function(){});
+*/
+  $("#brokerName").on("blur", function(){
+    var brokerData = this.value;
+    console.log(" Enter #brokerName: "+brokerData);
+    localDataStore.saveLoadItem("brokerName", brokerData);
+  });
+  $("#brokerLoadID").on("blur", function(){
+    var brokerData = this.value;
+    console.log(" Enter #brokerLoadID: "+brokerData);
+    localDataStore.loadData["brokerLoadID"]= brokerData;
+  });
+  $("#brokerPhone").on("blur", function(){
+    var brokerData = this.value;
+    console.log(" Enter #brokerPhone: "+brokerData);
+    localDataStore.loadData.brokerPhone = brokerData;
+  });
+/*
   $("#LoadTemp").on("", function(){});
   $("#preTripped").on("", function(){});
   $("#tempMatches").on("", function(){});
@@ -248,7 +285,6 @@ $(document).ready(function() {
   $("#totalEmptyMiles").on("", function(){});
   $("#totalLoadedMiles").on("", function(){});
   $("#totalMiles").on("", function(){});
-  $("#submitButton2").on("", function(){});
   $("#cright").on("", function(){});
 */
 
