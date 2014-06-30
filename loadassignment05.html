@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!-- Modified on Jun 30, 2014  begin refactor for HTML5         -->
+<!-- Created on Apr 26, 2011 2:48:54 PM                         -->
+<html>
+  <head>
+    <title>
+      Load Assignment
+    </title>
+    <link rel="stylesheet" type="text/css" href="./data/loadassignmentstyle.css" />
+  </head>
+  <body>
+    <form action="./loadassignmentaction05.php" method="post">
+      <table align='center' border='0' cellpadding='3' width='80%'>
+        <tr><td id='pageTitle' colspan='12'>Load Assignment Fuel</td></tr>
+        <tr>
+          <td align='center' colspan='12'>
+            <div class='menubar'>
+              <ul>
+                <li><a id="mainPage" href="loadassignment00.html">Home</a></li>
+                <li><a id="shipperPage" href="loadassignment01.html">Shipper</a></li>
+                <li><a id="consigneePage" href="loadassignment02.html">Consignee</a></li>
+                <li><a id="pickPage" href="loadassignment03.html">Pick(s)</a></li>
+                <li><a id="dropPage" href="loadassignment04.html">Drop(s)</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan='1'>&nbsp;</td>
+          <td align='left' colspan='9'>Load #:&nbsp;LOADNUMBER</td>
+          <td colspan='2'>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+          <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align='center' colspan='12'>
+            <table border='1' cellspacing='0' cellpadding='1'>
+              <tr>
+                <th align='center' colspan='1'>Brand</th>
+                <th align='center' colspan='1'>Hwy</th>
+                <th align='center' colspan='1'>Exit</th>
+                <th align='center' colspan='2'>City, State</th>
+                <th align='center' colspan='1'>Date</th>
+                <th align='center' colspan='1'>Odometer</th>
+                <th align='center' colspan='1'>Opti gal.</th>
+                <th align='center' colspan='1'>Actual gal.</th>
+<!--                <th align='center' colspan='1'>Pump $</th>  -->
+                <th align='center' colspan='1'>Cost</th>
+                <th align='center' colspan='1'>Fillup</th>
+<!--                <th align='center' colspan='1'>Edit</th>   -->
+              </tr>
+              <tr>
+                <td align='center'>
+                  <select name="fuelBrand">
+                    <option value="NULL">&nbsp;</option>
+                    <option value="Loves">Loves</option>
+                    <option value="Petro">Petro</option>
+                    <option value="Flying J">Flying J</option>
+                    <option value="Pilot">Pilot</option>
+                    <option value="TA">TA</option>
+                    <option value="AM Best">AM Best</option>
+                    <option value="Off Brand">Off Brand</option>
+                </select></td>
+                <td align='center' colspan='1'><input type="text" size="6" name="fuelHwy" /></td>
+                <td align='center' colspan='1'><input type="text" size="4" name="fuelExit" /></td>
+                <td align='center' colspan='2'><input type="text" size="36" name="fuelLocation" /></td>
+                <td align='center' colspan='1'><input type="text" size="10" name="fuelDate" /></td>
+                <td align='center' colspan='1'><input type="text" size="8" name="fuelOdo" /></td>
+                <td align='center' colspan='1'><input type="text" size="5" name="fuelOptiGals" /></td>
+                <td align='center' colspan='1'><input type="text" size="5" name="fuelActualGals" /></td>
+<!--                <td align='center' colspan='1'><input type="text" size="4" name="fuelPricePerGal" /></td>  -->
+                <td align='center' colspan='1'><input type="text" size="5" name="fuelCost" /></td>
+                <td align='center' colspan='1'><input type="checkbox" name="fuelFillUp" value="fillUP" /></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan='2'>&nbsp;</td>
+          <td colspan='8'><input type="submit" value="Save Fuel Stop" /></td>
+          <td colspan='2'>&nbsp;</td>
+        </tr>
+      </table>
+    </form>
+    <p id='cright'>&nbsp;&copy;&nbsp;2011&nbsp;Vallecito Software</p>
+  </body>
+
+</html>

@@ -1,124 +1,147 @@
 $(document).ready(function() {
 
-  var localDataStore = {
-
-     loadID: "",
-     loadNameSpace: "",
-     loadData: [ {actionButton1: ""},
-                 {actionButton2: ""},
-                 {beginingEmpty: ""},
-                 {beginingLoaded: ""},
-                 {brokerLoadID: ""},
-                 {brokerName: ""},
-                 {brokerPhone: ""},
-                 {emptyActual: ""},
-                 {emptyPaid: ""},
-                 {emptyVariance: ""},
-                 {endingEmpty: ""},
-                 {endingLoaded: ""},
-                 {loadActionFlag: ""},
-                 {loadDeliveryDate: new LoadDate},
-                 {loadedActual: ""},
-                 {loadedPaid: ""},
-                 {loadedVariance: ""},
-                 {loadNumber: ""},
-                 {loadStartDate: new LoadDate},
-                 {loadTemp: ""},
-                 {reeferPretripped: ""},
-                 {sealMatches: ""},
-                 {tempMatches: ""},
-                 {totalActual: ""},
-                 {totalEmptyMiles: ""},
-                 {totalLoadedMiles: ""},
-                 {totalMiles: ""},
-                 {totalPaid: ""},
-                 {totalVariance: ""},
-               ],
+  var LocalDataStore = {
+             loadID: "",
+             loadNameSpace: "",
+             actionButton1: "",
+             actionButton2: "",
+             beginingEmpty: "",
+             beginingLoaded: "",
+             brokerLoadID: "",
+             brokerName: "",
+             brokerPhone: "",
+             emptyActual: "",
+             emptyPaid: "",
+             emptyVariance: "",
+             endingEmpty: "",
+             endingLoaded: "",
+             loadActionFlag: "",
+             loadDeliveryDate: new LoadDate,
+             loadedActual: "",
+             loadedPaid: "",
+             loadedVariance: "",
+             loadStartDate: new LoadDate,
+             loadTemp: "",
+             reeferPretripped: "",
+             sealMatches: "",
+             tempMatches: "",
+             totalActual: "",
+             totalEmptyMiles: "",
+             totalLoadedMiles: "",
+             totalMiles: "",
+             totalPaid: "",
+             totalVariance: "",
+    
+      makeNewStorage: function(ld) {
+          console.log("enter LocalDataStore.makeNewStorage:");
+          this.loadID = ld;
+          this.loadNameSpace = "testLoad_"+ld;
+          if ( !this.retrieve() ) {
+            this.save;
+          } else {
+            console.log("   load "+ld+" retrieved")
+          }
+          return;
+      },
 
       initStorage: function(ld) {
-          console.log("enter localDataStore.initStorage:");
+          console.log("enter LocalDataStore.initStorage:");
           if( ld ) {
               console.log("   storage initialization request for load: "+ld);
               if( this.loadID !== ld ) {    //  current load not same as load specified
                   console.log("   old load: "+this.loadID);
                   if( this.loadID === "" ) {    //  app initialize
-                    this.loadNameSpace = "testLoad_"+ld;   //  generate nameSpace for local storage
-                    console.log("   new loadNameSpace: "+this.loadNameSpace);
-                    if( this.retrieve(this.loadNameSpace ) ) {   // get existing load?
-                      console.log("   storage read");      // specified load exists 
-                      populateDisplay(this.loadData);      // load existing data onto display
-                    } else {
-                      console.log("   storage NOT read");  // brand new load so save space
-                      this.loadID = ld;
-                      this.loadData.loadNumber = ld;                    //  save ID
-                      this.save();
-                    } 
+                    this.makeNewStorage(ld);
+                    populateDisplay(LocalDataStore);
+                    return;
                   } else {
                     this.save();
-                    this.loadID = ld;
-                    this.loadData.loadNumber = ld;
-                    this.loadNameSpace = "testLoad_"+ld;
-                    if( this.retrieve(this.loadNameSpace ) ) {   // get existing load?
-                      console.log("   storage read");      // specified load exists 
-                      populateDisplay(this.loadData);      // load existing data onto display
-                    } else {
-                      console.log("   storage NOT read");  // brand new load so save space
-                      this.loadID = ld;                    //  save ID
-                      this.loadData.loadNumber = ld;
-                      this.save();
-                    }
+                    this.makeNewStorage(ld);
+                    populateDisplay(LocalDataStore);
                   }
-                  return true;   
-              } else {}
-              console.log("   storage namespace is: "+this.loadNameSpace);
-              if( this.retrieve(this.loadNameSpace) ) {
-                  console.log("   storage read");
               } else {
-                  console.log("   storage NOT read");
+                  this.save();
               }
-          } else {
-            console.log("   ld not specified - storage not initialized");
           }
       },
 
       save: function () {
           console.log("enter LocalDataStorage.saveLocal:");
-          var memStorageAsString = JSON.stringify(this.loadData);
+          var memStorageAsString = JSON.stringify(this);
           console.log("   memStorageAsString: "+memStorageAsString);
           localStorage.setItem(this.loadNameSpace, memStorageAsString);
       },
 
       retrieve: function() {
+          var tmpData = [];
+          var item;
           console.log("enter LocalDataStorage.retrieveLocal:");
           var memStorageAsString = "";
           if( (memStorageAsString = localStorage.getItem(this.loadNameSpace)) ) {
             console.log("   memStorageAsString: "+memStorageAsString);
-            return this.loadData = JSON.parse(memStorageAsString) || [];
+            tmpData = JSON.parse(memStorageAsString) || [];
+            for (item in tmpData) {
+              console.log("   assigning "+tmpData[item]+" to "+item);
+              if( item == "loadDeliveryDate" || item == "loadStartDate" ) {
+                console.log("   data: "+item+"= "+tmpData[item]);
+              } else {
+                this[item] = tmpData[item];
+              }
+              console.log("   saved "+this[item]);
+            };
+            return true;
           } else {
             return false;
           }
       },
 
       saveLoadItem: function(item, info) {
-          console.log("Enter localDataStore.saveLoadItem: save- "+info+" in "+item);
+          console.log("Enter LocalDataStore.saveLoadItem: save- "+info+" in "+item);
           if( item=="loadDeliveryDate" || item=="loadStartDate" ) {
-            this.loadData[item] = this.fromString(info);
+            this[item] = this.fromString(info);
           } else {
-            this.loadData[item] = info;
+            this[item] = info;
           }
+          console.log("   saved this.loadData[item] = "+this[item]);
 //          this.save();
       },
 
       getLoadItem: function(item) {
         var data = "";
+        console.log("Enter LocalDataStore.getLoadItem: retrieve item: "+item);
         if( item=="loadDeliveryDate" || item=="loadStartDate" ) {
-          data = this.loadData[item].toString(this.loadData.year, this.loadData.month, this.loadData.day);
+          data = this[item].toString(this[item].year, this[item].month, this[item].day);
         } else {
-          data = this.loadData[item];
+          data = this[item];
         }
-          return data;  
+        console.log("exit getLoadItem");
+        return data;  
       },
-   };
+  };
+
+  function populateDisplay(loadInfo) {
+    var item;
+    var data;
+    console.log("enter populateDisplay");
+    for (item in loadInfo) {
+//      console.log("   checking: "+item+" class="+Object.prototype.toString.call(loadInfo[item]));
+      if( Object.prototype.toString.call(loadInfo[item]) == "[object Object]") {
+        if( item === "loadDeliveryDate" ) {
+          console.log("   checking loadDeliveryDate: "+item+" "+loadInfo[item].year);
+        } else if( item === "loadStartDate" ) {
+          console.log("   checking loadStartDate: "+item+" "+loadInfo[item].year);
+        }
+      } else if( Object.prototype.toString.call(loadInfo[item]) == "[object String]") {
+        if( loadInfo[item].length > 0 ) {
+          console.log("   populate: "+item+" with "+loadInfo[item]);
+        }
+      }
+//      else {
+//        console.log("   ignoring: "+Object.prototype.toString.call(loadInfo[item])+" "+item);
+//      } 
+    }
+    console.log("exit populateDisplay");
+  };
 
   function LoadDate(yy, mm, dd) {
     this.year = yy?yy:new Date().getFullYear();
@@ -154,10 +177,6 @@ $(document).ready(function() {
       return aDate;
     },
   }; 
-
-  function populateDisplay(loadInfo) {
-    console.log("enter populateDisplay");
-  };
 
   function initDeliveryDates(yy, mm, dd) {
     console.log("enter LoadDate.initDeliveryDates: yy: "+yy?yy:this.year+" mm: "+mm?mm:this.month+" dd: "+dd?dd:this.day);
@@ -215,77 +234,110 @@ $(document).ready(function() {
   $("#dropPage").on("", function(){});
   $("#fuelPage").on("", function(){});
 */
-  $("#ldNumber").on("blur", function() {
-       var ld = this.value;
+  $("#loadID").on("blur", function() {
+       var ld = $("#loadID").val();
        console.log("Enter #ldNumber.blur: ld= "+ld);
        if( !validateLoadNumber(ld) ) {
           alert("Entered load number ("+ld+") is in error. The Load Number is required and must be composed of seven (7) numeric digits.");
-          this.value("");
+//          this.value("");
           cancelEvent(window.event);
           return;
         }
-       if( !localDataStore ) {
-         console.log("   NO localDataStore!");
-       } else {
-         localDataStore
-         if( ld ) {
-           localDataStore.initStorage(ld);
-         } else {
-           console.log("      localDataStore exists but ld does not exist!");
-         }   
-       }
-      
+        LocalDataStore.initStorage(ld); 
   });
 /*
   $("#loadAction").on("", function(){});
   $("#loadStartDate").on("", function(){});
-  $("#submitButton1").on("", function(){});
 */
+  $("#submitButton1").on("click", function(){
+    console.log("Enter submitButton1" );
+  });
+
   $("#submitButton2").on("click", function(){
     console.log("Enter submitButton2" );
-    localDataStore.save();
+    LocalDataStore.save();
     $("#submitButton2").text("Save Load Assignment");
+    console.log("   a stopping point");
   });
 /*
   $("#selectDayOpts").on("", function(){});
 */
-  $("#brokerName").on("blur", function(){
-    var brokerData = this.value;
+  $("#brokerName").on("change", function(){
+    var brokerData = $("#brokerName").val();
     console.log(" Enter #brokerName: "+brokerData);
-    localDataStore.saveLoadItem("brokerName", brokerData);
+    LocalDataStore.saveLoadItem("brokerName", brokerData);
   });
-  $("#brokerLoadID").on("blur", function(){
-    var brokerData = this.value;
+  $("#brokerLoadID").on("change", function(){
+    var brokerData = $("#brokerLoadID").val();
     console.log(" Enter #brokerLoadID: "+brokerData);
-    localDataStore.loadData["brokerLoadID"]= brokerData;
+    LocalDataStore.saveLoadItem("brokerLoadID", brokerData);
+//    LocalDataStore.loadData["brokerLoadID"]= brokerData;
   });
-  $("#brokerPhone").on("blur", function(){
-    var brokerData = this.value;
+  $("#brokerPhone").on("change", function(){
+    var brokerData = $("#brokerPhone").val();
     console.log(" Enter #brokerPhone: "+brokerData);
-    localDataStore.loadData.brokerPhone = brokerData;
+    LocalDataStore.saveLoadItem("brokerPhone", brokerData);
+//    LocalDataStore.loadData.brokerPhone = brokerData;
+  });
+  $("#LoadTemp").on("change", function(){
+    var loadData = $("#LoadTemp").val();
+    console.log(" Enter #LoadTemp: "+loadData);
+    LocalDataStore.saveLoadItem("loadTemp", loadData);
+  });
+  $("#preTripped").on("change", function(){
+    var loadData = $("#preTripped").val();
+    console.log(" Enter #preTripped: "+loadData);
+    LocalDataStore.saveLoadItem("reeferPretripped", loadData);
+  });
+  $("#tempMatches").on("change", function(){
+    var loadData = $("#tempMatches").val();
+    console.log(" Enter #tempMatches: "+loadData);
+    LocalDataStore.saveLoadItem("tempMatches", loadData);
+  });
+  $("#sealMatches").on("change", function(){
+    var loadData = $("#sealMatches").val();
+    console.log(" Enter #sealMatches: "+loadData);
+    LocalDataStore.saveLoadItem("sealMatches", loadData);
+  });
+  $("#eP").on("change", function(){
+    var loadData = $("#eP").val();
+    console.log(" Enter #eP (emptyPaid): "+loadData);
+    LocalDataStore.saveLoadItem("emptyPaid", loadData);
+  });
+  $("#lP").on("change", function(){
+    var loadData = $("#lP").val();
+    console.log(" Enter #lP (loadedPaid): "+loadData);
+    LocalDataStore.saveLoadItem("loadedPaid", loadData);
   });
 /*
-  $("#LoadTemp").on("", function(){});
-  $("#preTripped").on("", function(){});
-  $("#tempMatches").on("", function(){});
-  $("#sealMatches").on("", function(){});
-  $("#eP").on("", function(){});
   $("#emptyActual").on("", function(){});
   $("#emptyVariance").on("", function(){});
-  $("#lP").on("", function(){});
   $("#loadedActual").on("", function(){});
   $("#loadedVariance").on("", function(){});
   $("#totalPaid").on("", function(){});
   $("#totalActual").on("", function(){});
   $("#totalVariance").on("", function(){});
-  $("#eOdoE").on("", function(){});
-  $("#eOdoL").on("", function(){});
-  $("#bOdoE").on("", function(){});
+*/
+  $("#eOdoE").on("change", function(){
+    var loadData = $("#eOdoE").val();
+    console.log(" Enter #eOdoE (endingOdoEmpty): "+loadData);
+    LocalDataStore.saveLoadItem("endingEmpty", loadData);
+  });
+  $("#eOdoL").on("change", function(){
+    var loadData = $("#eOdoL").val();
+    console.log(" Enter#eOdoL (endingOdoLoaded): "+loadData);
+    LocalDataStore.saveLoadItem("endingLoaded", loadData);
+  });
+  $("#bOdoE").on("change", function(){
+    var loadData = $("#bOdoE").val();
+    console.log(" Enter #bOdoE (beginningOdoEmpty): "+loadData);
+    LocalDataStore.saveLoadItem("beginingEmpty", loadData);
+  });
+/*
   $("#beginingLoaded").on("", function(){});
   $("#totalEmptyMiles").on("", function(){});
   $("#totalLoadedMiles").on("", function(){});
   $("#totalMiles").on("", function(){});
-  $("#cright").on("", function(){});
 */
 
 

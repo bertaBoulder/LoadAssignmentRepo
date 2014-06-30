@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!-- Modified on Jun 30, 2014  begin refactor for HTML5         -->
+<!-- Modified: 11/06/2013                                       -->
+<!-- Created: 04/26/2011 2:48:54 PM                             -->
+<html>
+  <head>
+    <title>
+      Shipper
+    </title>
+    <link rel="stylesheet" type="text/css" href="./data/loadassignmentstyle.css" />
+    <script type="text/javascript">
+
+    function catchEvent(eventObj, event, eventHandler) {
+      if (eventObj.addEventListener) {
+        eventObj.addEventListener(event, eventHandler, false);
+      } else if (eventObj.attachEvent) {
+        event = "on" + event;
+        eventObj.attachEvent(event, eventHandler);
+      }
+    }
+
+    function cancelEvent(evnt) {
+      if (evnt.preventDefault) {
+        evnt.preventDefault();
+        evnt.stopPropagation();
+      } else {
+        evnt.returnValue = false;
+        evnt.cancelBubble = true;
+      }
+    }
+
+    function setupEvents(evnt) {
+      var formObj = "";
+      if (document.getElementById("shipperForm")) {
+        formObj = document.getElementById("shipperForm");
+        catchEvent(formObj, "submit", validateForm);
+      }
+    }
+
+    function validateForm (evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var target = theEvent.target ? theEvent.target : theEvent.srcElement;
+      var inputFlds = document.getElementById("shipperForm").getElementsByTagName("input");
+//    alert("validateForm theEvent= " + theEvent);
+//    for (var i = 0; i < txtFlds.length; i++ ) {
+//      if (inputFlds[i].type != "submit") {
+//        alert(inputFlds[i].name + " = " + inputFlds[i].value);
+//      }
+//    }
+    }
+
+    var days=['01','02','03','04','05','06','07','08','09','10','11','12','13','14',
+              '15','16','17','18','19','20','21','22','23','24','25','26','27','28',
+              '29','30','31'];
+    var daysInMonth=[31,0,31,30,31,30,31,31,30,31,30,31];   
+    var todaysdate=new Date();
+    var todaysYear = todaysdate.getFullYear();
+    var todaysMonth = todaysdate.getMonth()+1;
+    var todaysDay = todaysdate.getDate();
+ 
+    function initVariables(evnt) {
+      var theEvent = evnt ? evnt : window.event;
+      var target = theEvent.target ? theEvent.target : theEvent.srcElement;
+      var selectDayFlds = document.getElementById("selectP_UOpts").options;
+      var oD = new Date(todaysYear, todaysMonth-1, 1);
+      oD.od=oD.getDay()+1;
+      daysInMonth[1]=(((oD.getFullYear()%100!=0)&&(oD.getFullYear()%4==0))||(oD.getFullYear()%400==0))?29:28;
+      dayIdx = todaysDay - 1;
+      mnthIdx = todaysMonth - 1;
+      yR = todaysYear;
+      for (var i = 0; i < selectDayFlds.length; i++ ) {
+        selectDayFlds[i].innerHTML = days[mnthIdx] + " / " + days[dayIdx] + " / " + yR;
+        selectDayFlds[i].value = days[mnthIdx] + "/" + days[dayIdx] + "/" + yR;
+        dayIdx++;
+        if ( dayIdx+1 > daysInMonth[mnthIdx] ) {
+          dayIdx = 0;
+          mnthIdx++;
+          if ( mnthIdx+1 > 11 ) {
+            mnthIdx = 0;
+            yR++;
+          }
+        }
+//        alert(selectDayFlds[i].innerHTML + " = " + selectDayFlds[i].value);
+      }
+    selectDayFlds[0].selected = true;
+
+    }
+
+    catchEvent(window, "load", setupEvents);
+    catchEvent(window, "load", initVariables);
+
+    </script>
+  </head>
+  <body>
+    <form id="shipperForm" action="./loadassignmentaction01.php" method="post">
+      <table align = center border='0' width='80%'>
+        <tr><td colspan='6' id='pageTitle'>Load Assignment Shipper</td></tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td align=center colspan='4'>
+            <div class="menubar">
+              <ul>
+                <li><a id="mainPage" href="loadassignment00.html">Home</a></li>
+                <li><a id="consigneePage" href="loadassignment02.html">Consignee</a></li>
+                <li><a id="pickPage" href="loadassignment03.html">Pick(s)</a></li>
+                <li><a id="dropPage" href="loadassignment04.html">Drop(s)</a></li>
+                <li><a id="fuelPage" href="loadassignment05.html">Fuel</a></li>
+              </ul>
+            </div>
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan='2'>&nbsp;</td>
+          <td align='left' colspan='2'>Load #:&nbsp;<?php echo $_GET["ld"]; ?> LOADNUMBER</td>
+          <td colspan='2'>&nbsp;</td>
+        </tr>
+        <tr>
+          <td align='center' colspan='9'>
+            <table border='0' cellpadding='5'>
+              <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+              </tr>
+              <tr>
+                <tr>
+                  <td align='left' colspan='1'>BOL#:</td>
+                  <td align='left' colspan='8'><input type="text" size="20" name="shipperBOL"/></td>
+                </tr>
+                <tr>
+                  <td align='left' colspan='1'>Outbound Seal#:</td>
+                  <td align='left' colspan='8'><input type="text" size="20" name="shipperSealOut"/></td>
+                </tr>
+              </tr>
+              <tr>
+                <td align='left' colspan='1'>Name:</td>
+                <td align='left' colspan='8'><input type="text" size="32" name="shipperName"/></td>
+              </tr>
+              <tr>
+                <td align='left' colspan='1'>Street:</td>
+                <td align='left' colspan='8'><input type="text" size="32" name="shipperStreetAddr"/></td>
+              </tr>
+              <tr>
+                <td align='left' colspan='1'>City:</td>
+                <td align='left' colspan='8'><input type="text" size="32" name="shipperCity"/></td>
+              </tr>
+              <tr>
+                <td align='right'colspan='1'>State:</td>
+                <td align='left' colspan='2'>
+                  <select id="stateORprovince" name="shipperState">
+                    <option value="NULL">&nbsp;</option>
+                    <option value="AL">AL</option> <option value="AK">AK</option> <option value="AZ">AZ</option>
+                    <option value="AR">AR</option> <option value="CA">CA</option> <option value="CO">CO</option>
+                    <option value="CT">CT</option> <option value="DE">DE</option> <option value="DC">DC</option>
+                    <option value="FL">FL</option> <option value="GA">GA</option> <option value="HI">HI</option>
+                    <option value="ID">ID</option> <option value="IL">IL</option> <option value="IN">IN</option>
+                    <option value="IA">IA</option> <option value="KS">KS</option> <option value="KY">KY</option>
+                    <option value="LA">LA</option> <option value="ME">ME</option> <option value="MD">MD</option>
+                    <option value="MA">MA</option> <option value="MI">MI</option> <option value="MN">MN</option>
+                    <option value="MS">MS</option> <option value="MO">MO</option> <option value="MT">MT</option>
+                    <option value="NE">NE</option> <option value="NV">NV</option> <option value="NH">NH</option>
+                    <option value="NJ">NJ</option> <option value="NM">NM</option> <option value="NY">NY</option>
+                    <option value="NC">NC</option> <option value="ND">ND</option> <option value="OH">OH</option>
+                    <option value="OK">OK</option> <option value="OR">OR</option> <option value="PA">PA</option>
+                    <option value="RI">RI</option> <option value="SC">SC</option> <option value="SD">SD</option>
+                    <option value="TN">TN</option> <option value="TX">TX</option> <option value="UT">UT</option>
+                    <option value="VT">VT</option> <option value="VA">VA</option> <option value="WA">WA</option>
+                    <option value="WV">WV</option> <option value="WI">WI</option> <option value="WY">WY</option>
+                  </select>
+                </td>
+                <td align='right' colspan='1'>Country:</td>
+                <td align='left' colspan='2'>
+                  <select id="usaORcanada" name="shipperCountry">
+                    <option value="USA" selected="selected">USA</option>
+                    <option value="CAN">CAN</option>
+                  </select>
+                </td>
+                <!--   State: select name="shipperState">
+                  <option value"AB">AB-Alberta</option> <option value"BC">BC-British Columbia</option>
+                  <option value"MB">MB-Manitoba</option> <option value"NB">NB-New Brunswick</option>
+                  <option value"NL">NL-Newfoundland and Labrador</option> <option value"NT">NT-Northwest Territories</option>
+                  <option value"NS">NS-Nova Scotia</option> <option value"NU">NU-Nunavut</option>
+                  <option value"ON">ON-Ontario</option> <option value"PE">PE-Prince Edward Island</option>
+                  <option value"QC">QC-Quebec</option> <option value"SK">SK-Saskatchewan</option>
+                  <option value"YT">YT-Yukon Territory</option>
+                </select>                                                                        -->
+                <td align='right' colspan='1'> Postal Code:</td>
+                <td align='left' colspan='2'><input type="text" size="6" name="shipperZip"/></td>
+                <tr>
+                  <td align='left' colspan='1'>P/U #:</td>
+                  <td align='left' colspan='3'><input type="text" size="25" name="shipperP_UNumber"/></td>
+                  <td align='right' colspan='1'><input type="checkbox" name="shipperP_UComplete" value="dropChecked" /></td>
+                  <td align='left' colspan='4'>Loading Complete</td>
+                </tr>
+                <tr>
+                  <td align='left' colspan='1'>Load Date:</td>
+                  <td align='left' colspan='8'>
+                    <div id="deliveryDate">
+                      <table>
+                        <tr>
+                          <td align='left'>
+                            <select id="selectP_UOpts" name="shipperP_UDate">
+                              <option value="01/01">01/01</option>
+                              <option value="01/02">01/02</option>
+                              <option value="01/03">01/03</option>
+                              <option value="01/04">01/04</option>
+                              <option value="01/05">01/05</option>
+                              <option value="01/06">01/06</option>
+                              <option value="01/07">01/07</option>
+                            </select>
+                          </td>
+                        </tr>
+                        <tr><td align='left'>mm/dd/yyyy</td></tr>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td align='left' colspan='1'>Load Time:</td>
+                  <td align='left' colspan='8'><input type="text" size="25" name="shipperP_UTime"/></td>
+                </tr>
+              </td>
+            </table>
+            <input type="submit" value="Save Shipper" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    <p id='cright'>&nbsp;&copy;&nbsp;2011&nbsp;Vallecito Software</p>
+    
+  </body>
+  
+</html>

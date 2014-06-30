@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Modified on Jun 30, 2014  add the rest of the main pages         -->
 <!-- Modified on Jun 06, 2014 12:34:00 PM  -->
 <!-- Modified on Jun 05, 2014 17:20:00 PM  -->
 <!-- Modified on Apr 26, 2014 08:10:00 PM  -->
@@ -12,13 +13,13 @@
     <link rel="stylesheet" type="text/css" href="css/loadassignmentstyle.css" />
     <script type="text/javascript" src="javascript/jquery-2.1.1.js"></script>
     <script type="text/javascript" src="javascript/LoadAssignment00.js"></script>
-    <script type="text/javascript">
+<!--    <script type="text/javascript">
       
-    </script>
+    </script>    -->
   </head>
   <body>
 <!--    <form id="loadForm" action="LoadAction00.php" method="post">    -->
-<!--    <form id="loadForm" action="#" method="post">    -->
+<!--    <form id="loadForm" action="#" method="post">                   -->
       <table id="mainTable" border="0" align="center">
         <tr><td colspan="6" id="pageTitle">Load Assignment Home</td></tr>
         <tr>
@@ -26,11 +27,11 @@
           <td align="center" colspan="4">
             <div class="menubar">
               <ul>
-                <li><a id="shipperPage" href="pagedloadassignment01.html" tabindex="17">Shipper</a></li>
-                <li><a id="consigneePage" href="pagedloadassignment02.html" tabindex="18">Consignee</a></li>
-                <li><a id="pickPage" href="pagedloadassignment03.html" tabindex="19">Pick(s)</a></li>
-                <li><a id="dropPage" href="pagedloadassignment04.html" tabindex="20">Drop(s)</a></li>
-                <li><a id="fuelPage" href="pagedloadassignment05.html" tabindex="21">Fuel</a></li>
+                <li><a id="shipperPage" href="loadassignment01.html" tabindex="17">Shipper</a></li>
+                <li><a id="consigneePage" href="loadassignment02.html" tabindex="18">Consignee</a></li>
+                <li><a id="pickPage" href="loadassignment03.html" tabindex="19">Pick(s)</a></li>
+                <li><a id="dropPage" href="loadassignment04.html" tabindex="20">Drop(s)</a></li>
+                <li><a id="fuelPage" href="loadassignment05.html" tabindex="21">Fuel</a></li>
               </ul>
             </div>
           </td>
@@ -46,7 +47,7 @@
               <tr>
                 <td align="left">Load &#35;:&nbsp;<font color="red" font-size="3em">*</font></td>
                 <td align="left">
-                  <input id="ldNumber" type="text" size="15" name="loadNumber" tabindex="1" autofocus >
+                  <input id="loadID" type="text" size="15" name="loadNumber" tabindex="1" autofocus >
             <!--             onblur="localDataStore.init(validateLoadNumber(this))" -->
                 </td>
                 <td align="center">
@@ -218,7 +219,7 @@
                                     beginingLoaded.value=eOdoE.value.toString();
                                     emptyActual.value=(parseInt(eOdoE.value)-parseInt(bOdoE.value)).toString();
                                     var perCentage=((parseInt(emptyActual.value)-
-                                                     parseInt(emptyPaid.value))/parseInt(emptyPaid.value))*100.0;
+                                                     parseInt(eP.value))/parseInt(eP.value))*100.0;
                                     emptyVariance.value=perCentage.toFixed(2); }">
                 </td>
                 <td align="center">
@@ -229,7 +230,7 @@
                                     totalActual.value=(parseInt(eOdoL.value)-parseInt(bOdoE.value)).toString();
                                     totalMiles.value=totalActual.value;
                                     var perCentage=((parseInt(loadedActual.value)-
-                                                     parseInt(loadedPaid.value))/parseInt(loadedPaid.value))*100.0;
+                                                     parseInt(lP.value))/parseInt(lP.value))*100.0;
                                     loadedVariance.value=perCentage.toFixed(2);
                                     perCentage=((parseInt(totalActual.value)-
                                                  parseInt(totalPaid.value))/parseInt(totalPaid.value))*100.0;
