@@ -22,9 +22,9 @@ $(document).ready(function() {
              loadedVariance: "",
              loadStartDate: new LoadDate,
              loadTemp: "",
-             reeferPretripped: "",
-             sealMatches: "",
-             tempMatches: "",
+             preTripped: false,
+             sealMatches: false,
+             tempMatches: false,
              totalActual: "",
              totalEmptyMiles: "",
              totalLoadedMiles: "",
@@ -39,7 +39,8 @@ $(document).ready(function() {
           if ( !this.retrieve() ) {
             this.save;
           } else {
-            console.log("   load "+ld+" retrieved")
+            console.log("   load "+ld+" retrieved");
+            newDeliveryDates(this.loadStartDate.year, this.loadStartDate.month, this.loadStartDate.day);
           }
           return;
       },
@@ -54,8 +55,9 @@ $(document).ready(function() {
                     this.makeNewStorage(ld);
                     populateDisplay(LocalDataStore);
                     return;
-                  } else {
+                  } else {    // need to save, clear then create and display
                     this.save();
+                    this.clear();
                     this.makeNewStorage(ld);
                     populateDisplay(LocalDataStore);
                   }
@@ -63,6 +65,38 @@ $(document).ready(function() {
                   this.save();
               }
           }
+      },
+
+      clear: function () {
+        console.log("enter LocalDataStorage.clear:");
+        this.actionButton1 = " ";
+        this.actionButton2 = " ";
+        this.beginingEmpty = " ";
+        this.beginingLoaded = " ";
+        this.brokerLoadID = " ";
+        this.brokerName = " ";
+        this.brokerPhone = " ";
+        this.emptyActual = " ";
+        this.emptyPaid = " ";
+        this.emptyVariance = " ";
+        this.endingEmpty = " ";
+        this.endingLoaded = " ";
+        this.loadActionFlag = " ";
+        this.loadDeliveryDate = new LoadDate;
+        this.loadedActual = " ";
+        this.loadedPaid = " ";
+        this.loadedVariance = " ";
+        this.loadStartDate = new LoadDate;
+        this.loadTemp = " ";
+        this.preTripped = false;
+        this.sealMatches = false;
+        this.tempMatches = false;
+        this.totalActual = " ";
+        this.totalEmptyMiles = " ";
+        this.totalLoadedMiles = " ";
+        this.totalMiles = " ";
+        this.totalPaid = " ";
+        this.totalVariance = " ";
       },
 
       save: function () {
@@ -83,11 +117,12 @@ $(document).ready(function() {
             for (item in tmpData) {
               console.log("   assigning "+tmpData[item]+" to "+item);
               if( item == "loadDeliveryDate" || item == "loadStartDate" ) {
-                console.log("   data: "+item+"= "+tmpData[item]);
+                this[item] = new LoadDate( tmpData[item].year, tmpData[item].month, tmpData[item].day );
+                console.log("   data: "+item+" = "+tmpData[item]);
               } else {
                 this[item] = tmpData[item];
               }
-              console.log("   saved "+this[item]);
+//             console.log("   saved "+this[item]);
             };
             return true;
           } else {
@@ -98,7 +133,8 @@ $(document).ready(function() {
       saveLoadItem: function(item, info) {
           console.log("Enter LocalDataStore.saveLoadItem: save- "+info+" in "+item);
           if( item=="loadDeliveryDate" || item=="loadStartDate" ) {
-            this[item] = this.fromString(info);
+            var dateArray = info.split("/");
+            this[item] = new LoadDate( dateArray[2], dateArray[0], dateArray[1] );
           } else {
             this[item] = info;
           }
@@ -121,24 +157,65 @@ $(document).ready(function() {
 
   function populateDisplay(loadInfo) {
     var item;
-    var data;
+    var data = "";
     console.log("enter populateDisplay");
     for (item in loadInfo) {
-//      console.log("   checking: "+item+" class="+Object.prototype.toString.call(loadInfo[item]));
       if( Object.prototype.toString.call(loadInfo[item]) == "[object Object]") {
         if( item === "loadDeliveryDate" ) {
-          console.log("   checking loadDeliveryDate: "+item+" "+loadInfo[item].year);
+          console.log("   checking loadDeliveryDate: "+item+" "+loadInfo[item].year+" / "+loadInfo[item].month+" / "+loadInfo[item].day);
+          data = loadInfo[item].month+"/"+loadInfo[item].day+"/"+loadInfo[item].year;
+          console.log("   date: "+data);
+          $("#selectDayOpts").val(data);
         } else if( item === "loadStartDate" ) {
-          console.log("   checking loadStartDate: "+item+" "+loadInfo[item].year);
+          console.log("   ignoring loadStartDate: "+item+" "+loadInfo[item].year+" / "+loadInfo[item].month+" / "+loadInfo[item].day);
         }
       } else if( Object.prototype.toString.call(loadInfo[item]) == "[object String]") {
         if( loadInfo[item].length > 0 ) {
-          console.log("   populate: "+item+" with "+loadInfo[item]);
+          if( item != "loadNameSpace" ) {
+            console.log("   populate: "+item+" with "+loadInfo[item]);
+            if ( item == "beginingEmpty" ) {
+              $("#bOdoE").val( parseInt(loadInfo[item]) );
+            } else if ( item == "endingEmpty" ) {
+              $("#eOdoE").val( parseInt(loadInfo[item]) );
+            } else if ( item == "endingLoaded" ) {
+              $("#eOdoL").val( parseInt(loadInfo[item]) );
+            } else if ( item == "emptyPaid" ) {
+              $("#eP").val( parseInt(loadInfo[item]) );
+            } else if ( item == "loadedPaid" ) {
+              $("#lP").val( parseInt(loadInfo[item]) );
+            } else if ( item == "emptyPaid" ||
+                        item == "beginingLoaded" ||
+                        item == "emptyActual" ||
+                        item == "loadedActual" ||
+                        item == "totalActual" ||
+                        item == "totalEmptyMiles" ||
+                        item == "totalLoadedMiles" ||
+                        item == "totalMiles" ||
+                        item == "totalPaid" ) {
+                data = parseInt(loadInfo[item])?parseInt(loadInfo[item]):"";
+                $("#"+item).val( data );
+            } else if ( item == "emptyVariance" ||
+                        item == "loadedVariance" ||
+                        item == "totalVariance" ) {
+                data = parseFloat(loadInfo[item])?parseFloat(loadInfo[item]).toFixed(2):"";
+                $("#"+item).val( data );
+            } else if ( item == "loadTemp" ) {
+                $("#LoadTemp").val(loadInfo[item]);
+            } else {
+                $("#"+item).val(loadInfo[item]);
+            }
+          }
+        }
+      } else if( Object.prototype.toString.call(loadInfo[item]) == "[object Boolean]") {
+        if ( item == "preTripped" ||
+             item == "sealMatches" ||
+             item == "tempMatches"  ) {
+          $("#"+item).prop("checked",loadInfo[item]);
         }
       }
-//      else {
-//        console.log("   ignoring: "+Object.prototype.toString.call(loadInfo[item])+" "+item);
-//      } 
+      else {
+        console.log("   ignoring: "+Object.prototype.toString.call(loadInfo[item])+" "+item);
+      } 
     }
     console.log("exit populateDisplay");
   };
@@ -157,8 +234,11 @@ $(document).ready(function() {
       var someYear = yy?yy:this.year;
       var someMonth = mm?mm:this.month;
       var someDay = dd?dd:this.day;
-      console.log("enter LoadDate.toString: "+someMonth+"/"+someDay+"/"+someYear)
-      return someMonth+"/"+someDay+"/"+someYear;
+      var dateString = "";
+      console.log("enter LoadDate.toString: "+someMonth+"/"+someDay+"/"+someYear);
+      dateString = someMonth+"/"+someDay+"/"+someYear;
+//      return someMonth+"/"+someDay+"/"+someYear;
+      return dateString;
     },
 
     fromString: function(someDate) {
@@ -178,18 +258,21 @@ $(document).ready(function() {
     },
   }; 
 
-  function initDeliveryDates(yy, mm, dd) {
-    console.log("enter LoadDate.initDeliveryDates: yy: "+yy?yy:this.year+" mm: "+mm?mm:this.month+" dd: "+dd?dd:this.day);
-    var startYear = yy?yy:this.year;
-    var startMonth = mm?mm:this.month;
-    var startDay = dd?dd:this.day;
+  function newDeliveryDates(yy, mm, dd) {
+    console.log("enter LoadDate.initDeliveryDates: ");
+    var today = new Date;
+    var startYear = yy?yy:today.getFullYear();
+    var startMonth = mm?mm:today.getMonth()+1;
+    var startDay = dd?dd:today.getDate();
     var days=['01','02','03','04','05','06','07','08','09','10','11','12','13','14',
               '15','16','17','18','19','20','21','22','23','24','25','26','27','28',
               '29','30','31'];
     var daysInMonth=[31,0,31,30,31,30,31,31,30,31,30,31];
-    var selectDayFlds = $("#selectDayOpts").options;
-    var dayIdx = todaysDay - 1;
-    var mnthIdx = todaysMonth - 1;
+//    var selectDayFlds = $("#selectDayOpts").options;
+    var selectDayFlds = document.getElementById("selectDayOpts").options;
+    var dayIdx = startDay - 1;
+    var mnthIdx = startMonth - 1;
+    today = 1;
     daysInMonth[1]=(((startYear%100!==0)&&(startYear%4===0))||(startYear%400===0))?29:28;
     for (var i = 0; i < selectDayFlds.length; i++ ) {
       optDate = days[mnthIdx] + "/" + days[dayIdx] + "/" + startYear;
@@ -224,31 +307,72 @@ $(document).ready(function() {
       } else {
           return false;
       }    
-    };
-/*
-  $("#mainTable").on("", function(){});
-  $("#pageTitle").on("", function(){});
-  $("#shipperPage").on("", function(){});
-  $("#consigneePage").on("", function(){});
-  $("#pickPage").on("", function(){});
-  $("#dropPage").on("", function(){});
-  $("#fuelPage").on("", function(){});
-*/
+  };
+
+  function calculatePaid() {
+    console.log("enter calculatePaid: ");
+    if( parseInt( $("#eP").val()) && parseInt($("#lP").val()) ) {
+        $("#totalPaid").val(parseInt($("#eP").val()) + parseInt($("#lP").val()));
+        LocalDataStore.saveLoadItem("totalPaid", $("#totalPaid").val());
+    }
+  };
+
+  function calculateEmpty() {
+      var perCentage;
+      console.log("enter calculateEmpty: ");
+      if( parseInt( $("#eOdoE").val() ) && parseInt( $("#bOdoE").val()) ) {
+          $("#totalEmptyMiles").val( parseInt($("#eOdoE").val()) - parseInt($("#bOdoE").val()) );
+          LocalDataStore.saveLoadItem("totalEmptyMiles", $("#totalEmptyMiles").val());
+          
+          $("#beginingLoaded").val($("#eOdoE").val());
+          LocalDataStore.saveLoadItem("beginingLoaded", $("#beginingLoaded").val() );
+          
+          $("#emptyActual").val(parseInt($("#eOdoE").val()) - parseInt($("#bOdoE").val()) );
+          LocalDataStore.saveLoadItem("emptyActual", $("#emptyActual").val());
+          
+          perCentage=((parseInt($("#emptyActual").val()) - parseInt($("#eP").val()))/parseInt($("#eP").val()))*100.0;
+          $("#emptyVariance").val(perCentage.toFixed(2));
+          LocalDataStore.saveLoadItem("emptyVariance", $("#emptyVariance").val());
+      }
+  };
+
+  function calculateLoaded() {
+      var perCentage;
+      console.log("enter calculateLoaded: ");
+      if(parseInt($("#eOdoE").val()) && parseInt($("#eOdoL").val())) {
+          $("#totalLoadedMiles").val( (parseInt($("#eOdoL").val()) - parseInt($("#eOdoE").val())) );
+          LocalDataStore.saveLoadItem("totalLoadedMiles", $("#totalLoadedMiles").val());
+          
+          $("#loadedActual").val( $("#totalLoadedMiles").val());
+          LocalDataStore.saveLoadItem("loadedActual", $("#loadedActual").val());
+          
+          $("#totalActual").val( parseInt($("#eOdoL").val()) - parseInt($("#bOdoE").val()) );
+          LocalDataStore.saveLoadItem("totalActual", $("#totalActual").val());
+          
+          $("#totalMiles").val( $("#totalActual").val() );
+          LocalDataStore.saveLoadItem("totalMiles", $("#totalMiles").val());
+          
+          perCentage = ( (parseInt($("#loadedActual").val()) - parseInt($("#lP").val())) / parseInt($("#lP").val())) * 100.0;
+          $("#loadedVariance").val( perCentage.toFixed(2) );
+          LocalDataStore.saveLoadItem("loadedVariance", $("#loadedVariance").val());
+          
+          perCentage = ( (parseInt($("#totalActual").val()) - parseInt($("#totalPaid").val())) / parseInt($("#totalPaid").val())) * 100.0;
+          $("#totalVariance").val( perCentage.toFixed(2) );
+          LocalDataStore.saveLoadItem("totalVariance", $("#totalVariance").val());
+      }
+  };
+
   $("#loadID").on("blur", function() {
        var ld = $("#loadID").val();
        console.log("Enter #ldNumber.blur: ld= "+ld);
        if( !validateLoadNumber(ld) ) {
           alert("Entered load number ("+ld+") is in error. The Load Number is required and must be composed of seven (7) numeric digits.");
-//          this.value("");
           cancelEvent(window.event);
           return;
         }
         LocalDataStore.initStorage(ld); 
   });
-/*
-  $("#loadAction").on("", function(){});
-  $("#loadStartDate").on("", function(){});
-*/
+
   $("#submitButton1").on("click", function(){
     console.log("Enter submitButton1" );
   });
@@ -259,9 +383,14 @@ $(document).ready(function() {
     $("#submitButton2").text("Save Load Assignment");
     console.log("   a stopping point");
   });
-/*
-  $("#selectDayOpts").on("", function(){});
-*/
+
+  $("#selectDayOpts").on("change", function(){
+    var loadData = $("#selectDayOpts").val();
+    console.log("Enter selectDayOpts/change "+loadData);
+    LocalDataStore.saveLoadItem("loadDeliveryDate", loadData);
+    console.log("   a stopping point");
+  });
+
   $("#brokerName").on("change", function(){
     var brokerData = $("#brokerName").val();
     console.log(" Enter #brokerName: "+brokerData);
@@ -271,13 +400,11 @@ $(document).ready(function() {
     var brokerData = $("#brokerLoadID").val();
     console.log(" Enter #brokerLoadID: "+brokerData);
     LocalDataStore.saveLoadItem("brokerLoadID", brokerData);
-//    LocalDataStore.loadData["brokerLoadID"]= brokerData;
   });
   $("#brokerPhone").on("change", function(){
     var brokerData = $("#brokerPhone").val();
     console.log(" Enter #brokerPhone: "+brokerData);
     LocalDataStore.saveLoadItem("brokerPhone", brokerData);
-//    LocalDataStore.loadData.brokerPhone = brokerData;
   });
   $("#LoadTemp").on("change", function(){
     var loadData = $("#LoadTemp").val();
@@ -285,31 +412,62 @@ $(document).ready(function() {
     LocalDataStore.saveLoadItem("loadTemp", loadData);
   });
   $("#preTripped").on("change", function(){
-    var loadData = $("#preTripped").val();
+    var loadData = $("#preTripped").prop("checked");
     console.log(" Enter #preTripped: "+loadData);
-    LocalDataStore.saveLoadItem("reeferPretripped", loadData);
+    LocalDataStore.saveLoadItem("preTripped", loadData);
   });
   $("#tempMatches").on("change", function(){
-    var loadData = $("#tempMatches").val();
+    var loadData = $("#tempMatches").prop("checked");
     console.log(" Enter #tempMatches: "+loadData);
     LocalDataStore.saveLoadItem("tempMatches", loadData);
   });
   $("#sealMatches").on("change", function(){
-    var loadData = $("#sealMatches").val();
+    var loadData = $("#sealMatches").prop("checked");
     console.log(" Enter #sealMatches: "+loadData);
     LocalDataStore.saveLoadItem("sealMatches", loadData);
   });
-  $("#eP").on("change", function(){
+  $("#eP").on("change", function(){       // emptyPaid
     var loadData = $("#eP").val();
     console.log(" Enter #eP (emptyPaid): "+loadData);
     LocalDataStore.saveLoadItem("emptyPaid", loadData);
+    calculatePaid();
   });
-  $("#lP").on("change", function(){
+  $("#lP").on("change", function(){       // loadedPaid
     var loadData = $("#lP").val();
     console.log(" Enter #lP (loadedPaid): "+loadData);
     LocalDataStore.saveLoadItem("loadedPaid", loadData);
+    calculatePaid();
+  });
+
+  $("#eOdoE").on("change", function(){        // endingOdoEmpty
+    var loadData = $("#eOdoE").val();
+    console.log(" Enter #eOdoE (endingOdoEmpty): "+loadData);
+    LocalDataStore.saveLoadItem("endingEmpty", loadData);
+    calculateEmpty();
+  });
+  $("#eOdoL").on("change", function(){        // endingOdoLoaded
+    var loadData = $("#eOdoL").val();
+    console.log(" Enter#eOdoL (endingOdoLoaded): "+loadData);
+    LocalDataStore.saveLoadItem("endingLoaded", loadData);
+    calculateLoaded();
+  });
+  $("#bOdoE").on("change", function(){        // beginningOdoEmpty
+    var loadData = $("#bOdoE").val();   
+    console.log(" Enter #bOdoE (beginningOdoEmpty): "+loadData);
+    LocalDataStore.saveLoadItem("beginingEmpty", loadData);
+    calculateEmpty();
   });
 /*
+  $("#mainTable").on("", function(){});
+  $("#pageTitle").on("", function(){});
+  $("#shipperPage").on("", function(){});
+  $("#consigneePage").on("", function(){});
+  $("#pickPage").on("", function(){});
+  $("#dropPage").on("", function(){});
+  $("#fuelPage").on("", function(){});
+  $("#loadAction").on("", function(){});
+  $("#loadStartDate").on("", function(){});
+  $("#selectDayOpts").on("focus", function(){});
   $("#emptyActual").on("", function(){});
   $("#emptyVariance").on("", function(){});
   $("#loadedActual").on("", function(){});
@@ -317,27 +475,10 @@ $(document).ready(function() {
   $("#totalPaid").on("", function(){});
   $("#totalActual").on("", function(){});
   $("#totalVariance").on("", function(){});
-*/
-  $("#eOdoE").on("change", function(){
-    var loadData = $("#eOdoE").val();
-    console.log(" Enter #eOdoE (endingOdoEmpty): "+loadData);
-    LocalDataStore.saveLoadItem("endingEmpty", loadData);
-  });
-  $("#eOdoL").on("change", function(){
-    var loadData = $("#eOdoL").val();
-    console.log(" Enter#eOdoL (endingOdoLoaded): "+loadData);
-    LocalDataStore.saveLoadItem("endingLoaded", loadData);
-  });
-  $("#bOdoE").on("change", function(){
-    var loadData = $("#bOdoE").val();
-    console.log(" Enter #bOdoE (beginningOdoEmpty): "+loadData);
-    LocalDataStore.saveLoadItem("beginingEmpty", loadData);
-  });
-/*
-  $("#beginingLoaded").on("", function(){});
-  $("#totalEmptyMiles").on("", function(){});
-  $("#totalLoadedMiles").on("", function(){});
-  $("#totalMiles").on("", function(){});
+  $("#beginingLoaded").on("", function(){});  // beginningOdoLoaded
+  $("#totalEmptyMiles").on("", function(){}); //
+  $("#totalLoadedMiles").on("", function(){});//
+  $("#totalMiles").on("", function(){});      //
 */
 
 

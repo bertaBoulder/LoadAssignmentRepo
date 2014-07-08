@@ -13,9 +13,37 @@
     <link rel="stylesheet" type="text/css" href="css/loadassignmentstyle.css" />
     <script type="text/javascript" src="javascript/jquery-2.1.1.js"></script>
     <script type="text/javascript" src="javascript/LoadAssignment00.js"></script>
-<!--    <script type="text/javascript">
-      
-    </script>    -->
+    <script type="text/javascript">
+      function initDeliveryDates() {
+        console.log("enter LoadDate.initDeliveryDates: ");
+        var today = new Date;
+        var startYear = today.getFullYear();
+        var startMonth = today.getMonth()+1;
+        var startDay = today.getDate();
+        var days=['01','02','03','04','05','06','07','08','09','10','11','12','13','14',
+                  '15','16','17','18','19','20','21','22','23','24','25','26','27','28',
+                  '29','30','31'];
+        var daysInMonth=[31,0,31,30,31,30,31,31,30,31,30,31];
+        var selectDayFlds = document.getElementById("selectDayOpts").options;
+        var dayIdx = startDay - 1;
+        var mnthIdx = startMonth - 1;
+        daysInMonth[1]=(((startYear%100!==0)&&(startYear%4===0))||(startYear%400===0))?29:28;
+        for (var i = 0; i < selectDayFlds.length; i++ ) {
+          optDate = days[mnthIdx] + "/" + days[dayIdx] + "/" + startYear;
+          selectDayFlds[i].innerHTML = optDate;
+          selectDayFlds[i].value = optDate;
+          dayIdx++;
+          if ( dayIdx+1 > daysInMonth[mnthIdx] ) {
+           dayIdx = 0;
+            mnthIdx++;
+           if ( mnthIdx+1 > 11 ) {
+             mnthIdx = 0;
+             startYear++;
+           }
+          }
+        }
+      };
+    </script>
   </head>
   <body>
 <!--    <form id="loadForm" action="LoadAction00.php" method="post">    -->
@@ -122,26 +150,26 @@
             <table border="0" cellpadding="5">
               <tr>
                 <td>
-                  <input id="LoadTemp" type="text" size="5" name="loadTemp" tabindex="7" />
+                  <input id="LoadTemp" type="text" size="5" name="ldTemp" tabindex="7" />
                 </td>
                 <td align="left">BOL Temp:</td>
                 <td>&nbsp;</td>
               </tr>
               <tr>
                 <td align="center">
-                  <input id="preTripped" type="checkbox" name="reeferPretripped" value="preTripped" tabindex="8" /></td>
+                  <input id="preTripped" type="checkbox" name="reeferPretrip" value="preTripped" tabindex="8" /></td>
                 <td align="left">Reefer Pretrip</td>
                 <td>&nbsp;</td>
               </tr>
               <tr>
                 <td align="center">
-                  <input id="tempMatches" type="checkbox" name="tempMatches" value="tempChecked" tabindex="9" /></td>
+                  <input id="tempMatches" type="checkbox" name="tmpMatch" value="tempChecked" tabindex="9" /></td>
                 <td align="left">Set Temp Matches BOL</td>
                 <td>&nbsp;</td>
               </tr>
               <tr>
                 <td align="center">
-                  <input id="sealMatches" type="checkbox" name="sealMatches" value="sealChecked" tabindex="10" /></td>
+                  <input id="sealMatches" type="checkbox" name="sealMatch" value="sealChecked" tabindex="10" /></td>
                 <td align="left">Seal Matches BOL</td>
                 <td>&nbsp;</td>
               </tr>
@@ -163,9 +191,8 @@
               <tr>
                 <td class="titleCell" align="center">Empty</td>
                 <td align="center">
-                  <input id="eP" type="number" name="emptyPaid" class="dataCell" tabindex="11" 
-                        onblur="if( parseInt(eP.value) && parseInt(lP.value) ) {
-                                  totalPaid.value=(parseInt(eP.value)+parseInt(lP.value)).toString();}">
+                  <input id="eP" type="number" name="emptyPaid" class="dataCell" tabindex="11">
+            <!--            onblur="calculatePaid();"   >  -->
                 </td>
                 <td class="computedCell" align="center">
                   <output id="emptyActual" for="bOdoE eOdoE" type="number" class="dataCell" name="emptyActual"></output>
@@ -177,12 +204,11 @@
               <tr>
                 <td class="titleCell" align="center">Loaded</td>
                 <td align="center">
-                  <input id="lP" type="number" class="dataCell"  name="loadedPaid" tabindex="12" 
-                         onblur="if(parseInt(eP.value) && parseInt(lP.value)) {
-                                   totalPaid.value=(parseInt(eP.value)+parseInt(lP.value)).toString();}" >
+                  <input id="lP" type="number" class="dataCell"  name="loadedPaid" tabindex="12"> 
+            <!--             onblur="calculatePaid();"   >  -->
                 </td>
                 <td class="computedCell" align="center">
-                  <output id="loadedActual" for="eOdoE eOdoL" type="number" class="dataCell" name="loadedActual" ></output>
+                  <output id="loadedActual" for="eOdoE eOdoL" type="number" class="dataCell" name="loadActual" ></output>
                 </td>
                 <td class="computedCell" align="center">
                   <output id="loadedVariance" type="number" class="dataCell" name="loadedVariance" ></output>
@@ -191,13 +217,13 @@
               <tr>
                 <td class="titleCell" align="center">Total</td>
                 <td class="computedCell" align="center">
-                  <output id="totalPaid" for="eP lP" type="number" class="dataCell"  name="totalPaid"></output>
+                  <output id="totalPaid" for="eP lP" type="number" class="dataCell"  name="totPaid"></output>
                 </td>
                 <td class="computedCell" align="center">
-                  <output id="totalActual" for="bOdoE eOdoE eOdoL" type="number" class="dataCell"  name="totalActual" ></output>
+                  <output id="totalActual" for="bOdoE eOdoL" type="number" class="dataCell"  name="totActual" ></output>
                 </td>
                 <td class="computedCell" align="center">
-                  <output id="totalVariance" for="bOdoE eOdoL" type="number" class="dataCell" name="totalVariance" ></output>
+                  <output id="totalVariance" for="bOdoE eOdoL" type="number" class="dataCell" name="totVariance" ></output>
                 </td>
               </tr>
             </table>
@@ -213,18 +239,18 @@
               <tr>
                 <td class="titleCell" align="center">End Odo</td>
                 <td align="center">
-                  <input id="eOdoE" type="number" class="dataCell" name="endingEmpty" tabindex="14" 
-                         onblur="if(parseInt(eOdoE.value) && parseInt(bOdoE.value)) {
+                  <input id="eOdoE" type="number" class="dataCell" name="endingEmpty" tabindex="14" >
+              <!--           onblur="if(parseInt(eOdoE.value) && parseInt(bOdoE.value)) {
                                     totalEmptyMiles.value=(parseInt(eOdoE.value)-parseInt(bOdoE.value)).toString(); 
                                     beginingLoaded.value=eOdoE.value.toString();
                                     emptyActual.value=(parseInt(eOdoE.value)-parseInt(bOdoE.value)).toString();
                                     var perCentage=((parseInt(emptyActual.value)-
                                                      parseInt(eP.value))/parseInt(eP.value))*100.0;
-                                    emptyVariance.value=perCentage.toFixed(2); }">
+                                    emptyVariance.value=perCentage.toFixed(2); }">  -->
                 </td>
                 <td align="center">
-                  <input id="eOdoL" type="number" class="dataCell" name="endingLoaded" tabindex="15" 
-                         onblur="if(parseInt(eOdoE.value) && parseInt(eOdoL.value)) {
+                  <input id="eOdoL" type="number" class="dataCell" name="endingLoaded" tabindex="15" >
+              <!--           onblur="if(parseInt(eOdoE.value) && parseInt(eOdoL.value)) {
                                     totalLoadedMiles.value=(parseInt(eOdoL.value)-parseInt(eOdoE.value)).toString();
                                     loadedActual.value=totalLoadedMiles.value.toString();
                                     totalActual.value=(parseInt(eOdoL.value)-parseInt(bOdoE.value)).toString();
@@ -234,7 +260,7 @@
                                     loadedVariance.value=perCentage.toFixed(2);
                                     perCentage=((parseInt(totalActual.value)-
                                                  parseInt(totalPaid.value))/parseInt(totalPaid.value))*100.0;
-                                    totalVariance.value=perCentage.toFixed(2); }" >
+                                    totalVariance.value=perCentage.toFixed(2); }" >  -->
                 </td>
                 <td class="emptyCell">&nbsp;</td>
               </tr>
@@ -272,8 +298,8 @@
 <!--    </form>    -->
     <p><font color="red" font-size="1em">*&nbsp;Required field</font></p>
     <p id="cright">&nbsp;&copy;&nbsp;2011&nbsp;Vallecito Software</p>
-<!--    <script type="text/javascript">
-      localDataStore.init(); 
-    </script>    -->
+    <script type="text/javascript">
+      initDeliveryDates(); 
+    </script>
   </body>
 </html>
